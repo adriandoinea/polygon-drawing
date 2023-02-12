@@ -1,9 +1,7 @@
 import React, { useRef, useState } from "react";
 import "./PolygonDrawing.css";
-import { Point, draw } from "../util";
+import { Point, draw, arePointsConnected } from "../util";
 import { Button, Stack } from "@mui/material";
-import ZoomInIcon from "@mui/icons-material/ZoomIn";
-import ZoomOutIcon from "@mui/icons-material/ZoomOut";
 
 const PolygonDrawing = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -20,21 +18,13 @@ const PolygonDrawing = () => {
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    ctx.fillRect(x, y, 2, 2);
-    for (let i = 0; i < points.length; i++) {
-      if (
-        x >= points[0].x - 2 &&
-        x <= points[0].x + 2 &&
-        y >= points[0].y - 2 &&
-        y <= points[0].y + 2
-      ) {
-        setConnected(true);
-      }
-    }
+    ctx.fillRect(x, y, 1, 1);
+
     const newPoints = [...points, { x, y }];
     setPoints(newPoints);
 
     draw(newPoints, canvas);
+    if (arePointsConnected(newPoints)) setConnected(true);
   };
 
   const handleNewDrawing = () => {
@@ -43,31 +33,16 @@ const PolygonDrawing = () => {
   };
 
   return (
-    <Stack
-      width="100vw"
-      height="100vh"
-      alignItems="center"
-      justifyContent="center"
-      rowGap="10px"
-    >
+    <Stack alignItems="center" justifyContent="center" rowGap="10px">
       <canvas
         className="canvas"
         ref={canvasRef}
         onClick={handlePoints}
-        width={500}
-        height={500}
+        width={800}
+        height={700}
       >
         <p>Canvas drawing</p>
       </canvas>
-
-      <div>
-        <Button>
-          <ZoomOutIcon />
-        </Button>
-        <Button>
-          <ZoomInIcon />
-        </Button>
-      </div>
 
       <Button
         onClick={handleNewDrawing}
