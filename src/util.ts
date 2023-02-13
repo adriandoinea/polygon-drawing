@@ -24,9 +24,11 @@ export function drawWhenRender(points: Point[], canvas: any) {
 
     if (!ctx) return;
     ctx.beginPath();
-    ctx.moveTo(points[0].x, points[0].y);
-    for (let i = 0; i < points.length; i++) {
-      ctx.lineTo(points[i].x, points[i].y);
+    if (points.length > 1) {
+      ctx.moveTo(points[0].x, points[0].y);
+      for (let i = 0; i < points.length; i++) {
+        ctx.lineTo(points[i].x, points[i].y);
+      }
     }
 
     ctx.stroke();
