@@ -27,6 +27,10 @@ const polygonSlice = createSlice({
     updatePolygon(state, action: PayloadAction<UpdatePolygonAction>) {
       state.polygons[action.payload.id] = action.payload.newPolygon;
     },
+
+    clear(state) {
+      state.polygons = [];
+    },
   },
 });
 

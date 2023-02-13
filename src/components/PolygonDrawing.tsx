@@ -10,37 +10,38 @@ import { RootState } from "../store";
 const PolygonDrawing = () => {
   const dispatch = useDispatch();
   const polygons = useSelector((state: RootState) => state.polygons.polygons);
+  const promptInfo = useSelector((state: RootState) => state.dialog);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [points, setPoints] = useState<Point[]>([]);
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    if (localStorage.getItem("polygons")) {
-      const savedPolygons = JSON.parse(localStorage.getItem("polygons")!);
-      if (savedPolygons.length > 0) {
-        for (let i = 0; i < savedPolygons.length; i++) {
-          dispatch(
-            polygonActions.updatePolygon({
-              id: savedPolygons[i].id,
-              newPolygon: savedPolygons[i],
-            })
-          );
+    if (promptInfo.restoreLastSession) {
+      if (localStorage.getItem("polygons")) {
+        const savedPolygons = JSON.parse(localStorage.getItem("polygons")!);
+        if (savedPolygons.length > 0) {
+          for (let i = 0; i < savedPolygons.length; i++) {
+            dispatch(
+              polygonActions.updatePolygon({
+                id: savedPolygons[i].id,
+                newPolygon: savedPolygons[i],
+              })
+            );
+            for (let i = 0; i < savedPolygons.length; i++) {
+              drawWhenRender(savedPolygons[i].points, canvasRef.current);
+            }
+          }
         }
       }
+    } else {
+      canvasRef.current
+        ?.getContext("2d")
+        ?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      dispatch(polygonActions.clear());
+      localStorage.clear();
     }
-  }, []);
-
-  useEffect(() => {
-    if (localStorage.getItem("polygons")) {
-      const savedPolygons = JSON.parse(localStorage.getItem("polygons")!);
-      if (savedPolygons.length > 0) {
-        for (let i = 0; i < savedPolygons.length; i++) {
-          drawWhenRender(savedPolygons[i].points, canvasRef.current);
-        }
-      }
-    }
-  }, []);
+  }, [promptInfo.restoreLastSession]);
 
   useEffect(() => {
     if (polygons.length > 0) {
@@ -79,8 +80,8 @@ const PolygonDrawing = () => {
         className="canvas"
         ref={canvasRef}
         onClick={handlePoints}
-        width={800}
-        height={700}
+        width={700}
+        height={600}
       >
         <p>Canvas drawing</p>
       </canvas>
