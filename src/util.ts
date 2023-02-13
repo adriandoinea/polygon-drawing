@@ -1,7 +1,4 @@
-export interface Point {
-  x: number;
-  y: number;
-}
+import { Point } from "./types";
 
 export function draw(points: Point[], canvas: any) {
   if (canvas.getContext) {
@@ -15,6 +12,21 @@ export function draw(points: Point[], canvas: any) {
     if (points.length > 1) {
       ctx.moveTo(lastButOnePoint.x, lastButOnePoint.y);
       ctx.lineTo(lastPoint.x, lastPoint.y);
+    }
+
+    ctx.stroke();
+  }
+}
+
+export function drawWhenRender(points: Point[], canvas: any) {
+  if (canvas.getContext) {
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) return;
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    for (let i = 0; i < points.length; i++) {
+      ctx.lineTo(points[i].x, points[i].y);
     }
 
     ctx.stroke();

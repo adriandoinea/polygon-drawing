@@ -1,12 +1,52 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./PolygonDrawing.css";
-import { Point, draw, arePointsConnected } from "../util";
+import { draw, arePointsConnected, drawWhenRender } from "../util";
 import { Button, Stack } from "@mui/material";
+import { Point } from "../types";
+import { useDispatch, useSelector } from "react-redux";
+import { polygonActions } from "../store/polygon-slice";
+import { RootState } from "../store";
 
 const PolygonDrawing = () => {
+  const dispatch = useDispatch();
+  const polygons = useSelector((state: RootState) => state.polygons.polygons);
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [points, setPoints] = useState<Point[]>([]);
   const [connected, setConnected] = useState(false);
+
+  useEffect(() => {
+    if (localStorage.getItem("polygons")) {
+      const savedPolygons = JSON.parse(localStorage.getItem("polygons")!);
+      if (savedPolygons.length > 0) {
+        for (let i = 0; i < savedPolygons.length; i++) {
+          dispatch(
+            polygonActions.updatePolygon({
+              id: savedPolygons[i].id,
+              newPolygon: savedPolygons[i],
+            })
+          );
+        }
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (localStorage.getItem("polygons")) {
+      const savedPolygons = JSON.parse(localStorage.getItem("polygons")!);
+      if (savedPolygons.length > 0) {
+        for (let i = 0; i < savedPolygons.length; i++) {
+          drawWhenRender(savedPolygons[i].points, canvasRef.current);
+        }
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (polygons.length > 0) {
+      localStorage.setItem("polygons", JSON.stringify(polygons));
+    }
+  }, [polygons]);
 
   const handlePoints = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
@@ -28,6 +68,7 @@ const PolygonDrawing = () => {
   };
 
   const handleNewDrawing = () => {
+    dispatch(polygonActions.addNewPolygon(points));
     setConnected(false);
     setPoints([]);
   };
@@ -49,7 +90,7 @@ const PolygonDrawing = () => {
         variant="contained"
         disabled={!connected}
       >
-        Start a new drawing
+        Close the current polygon
       </Button>
     </Stack>
   );
