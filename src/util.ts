@@ -1,4 +1,4 @@
-import { Point } from "./types";
+import { Point } from "./types/types";
 
 export function draw(points: Point[], canvas: any) {
   if (canvas.getContext) {

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Point, Polygon } from "../types";
+import { Point, Polygon } from "../types/types";
 
 interface Polygons {
   polygons: Polygon[];

@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import "./PolygonDrawing.css";
+import styles from "./PolygonDrawing.module.css";
 import { draw, arePointsConnected, drawWhenRender } from "../util";
 import { Button, Stack } from "@mui/material";
-import { Point } from "../types";
+import { Point } from "../types/types";
 import { useDispatch, useSelector } from "react-redux";
 import { polygonActions } from "../store/polygon-slice";
 import { RootState } from "../store";
@@ -80,7 +80,7 @@ const PolygonDrawing = () => {
   return (
     <Stack alignItems="center" justifyContent="center" rowGap="10px">
       <canvas
-        className="canvas"
+        className={styles.canvas}
         ref={canvasRef}
         onClick={handlePoints}
         width={700}
