@@ -22,15 +22,7 @@ const PolygonDrawing = () => {
         const savedPolygons = JSON.parse(localStorage.getItem("polygons")!);
         if (savedPolygons.length > 0) {
           for (let i = 0; i < savedPolygons.length; i++) {
-            dispatch(
-              polygonActions.updatePolygon({
-                id: savedPolygons[i].id,
-                newPolygon: savedPolygons[i],
-              })
-            );
-            for (let i = 0; i < savedPolygons.length; i++) {
-              drawWhenRender(savedPolygons[i].points, canvasRef.current);
-            }
+            dispatch(polygonActions.renderPolygons(savedPolygons));
           }
         }
       }
@@ -44,8 +36,19 @@ const PolygonDrawing = () => {
   }, [promptInfo.restoreLastSession]);
 
   useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
     if (polygons.length > 0) {
       localStorage.setItem("polygons", JSON.stringify(polygons));
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < polygons.length; i++) {
+        drawWhenRender(polygons[i].points, canvasRef.current);
+      }
     }
   }, [polygons]);
 

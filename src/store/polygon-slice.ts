@@ -7,25 +7,20 @@ interface Polygons {
 
 const initialState: Polygons = { polygons: [] };
 
-interface UpdatePolygonAction {
-  id: number;
-  newPolygon: Polygon;
-}
-
 const polygonSlice = createSlice({
   name: "polygonSlice",
   initialState,
   reducers: {
+    renderPolygons(state, action: PayloadAction<Polygon[]>) {
+      state.polygons = action.payload;
+    },
+
     addNewPolygon(state, action: PayloadAction<Point[]>) {
       state.polygons.push({
         id: state.polygons.length,
         points: action.payload,
         numPoints: action.payload.length,
       });
-    },
-
-    updatePolygon(state, action: PayloadAction<UpdatePolygonAction>) {
-      state.polygons[action.payload.id] = action.payload.newPolygon;
     },
 
     clear(state) {
