@@ -10,7 +10,7 @@ import { RootState } from "./store";
 import { dialogActions } from "./store/dialog-slice";
 
 function App() {
-  const polygons = useSelector((state: RootState) => state.polygons.polygons);
+  const polygons = useSelector((state: RootState) => state.polygons);
   const dispatch = useDispatch();
   const [showTextarea, setShowTextarea] = useState(false);
   const { onStringChange } = useDataParser();

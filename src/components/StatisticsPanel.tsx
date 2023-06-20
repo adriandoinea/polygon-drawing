@@ -5,8 +5,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store";
 
 const StatisticsPanel = () => {
-  const polygons = useSelector((state: RootState) => state.polygons.polygons);
-
+  const polygons = useSelector((state: RootState) => state.polygons);
   const [shownSettings, setShownSettings] = useState(false);
 
   const renderStatistics = () => {

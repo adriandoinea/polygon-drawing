@@ -9,7 +9,7 @@ import { RootState } from "../store";
 
 const PolygonDrawing = () => {
   const dispatch = useDispatch();
-  const polygons = useSelector((state: RootState) => state.polygons.polygons);
+  const polygons = useSelector((state: RootState) => state.polygons);
   const promptInfo = useSelector((state: RootState) => state.dialog);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);

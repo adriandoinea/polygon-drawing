@@ -5,13 +5,13 @@ const promptSlice = createSlice({
   initialState: { isOpen: false, restoreLastSession: true },
   reducers: {
     openDialog(state) {
-      state.isOpen = true;
+      return { ...state, isOpen: true };
     },
     closeDialog(state) {
-      state.isOpen = false;
+      return { ...state, isOpen: false };
     },
     restoreLastSession(state, action: PayloadAction<boolean>) {
-      state.restoreLastSession = action.payload;
+      return { ...state, restoreLastSession: action.payload };
     },
   },
 });

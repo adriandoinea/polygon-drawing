@@ -1,30 +1,27 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Point, Polygon } from "../types/types";
 
-interface Polygons {
-  polygons: Polygon[];
-}
-
-const initialState: Polygons = { polygons: [] };
+const initialState: Polygon[] = [];
 
 const polygonSlice = createSlice({
   name: "polygonSlice",
   initialState,
   reducers: {
     renderPolygons(state, action: PayloadAction<Polygon[]>) {
-      state.polygons = action.payload;
+      return action.payload;
     },
 
     addNewPolygon(state, action: PayloadAction<Point[]>) {
-      state.polygons.push({
-        id: state.polygons.length,
+      const newPolygon = {
+        id: state.length,
         points: action.payload,
         numPoints: action.payload.length,
-      });
+      };
+      return [...state, newPolygon];
     },
 
-    clear(state) {
-      state.polygons = [];
+    clear() {
+      return [];
     },
   },
 });
