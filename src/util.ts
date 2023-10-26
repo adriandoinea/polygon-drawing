@@ -1,6 +1,6 @@
 import { Point } from "./types/types";
 
-export function draw(points: Point[], canvas: any) {
+export function draw(points: Point[], canvas: HTMLCanvasElement) {
   if (canvas.getContext) {
     const lastButOnePoint = points[points.length - 2];
     const lastPoint = points[points.length - 1];
@@ -18,7 +18,7 @@ export function draw(points: Point[], canvas: any) {
   }
 }
 
-export function drawWhenRender(points: Point[], canvas: any) {
+export function drawWhenRender(points: Point[], canvas: HTMLCanvasElement) {
   if (canvas.getContext) {
     const ctx = canvas.getContext("2d");
 

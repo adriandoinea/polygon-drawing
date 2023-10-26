@@ -9,7 +9,7 @@ import { RootState } from "../store";
 
 const PolygonDrawing = () => {
   const dispatch = useDispatch();
-  const polygons = useSelector((state: RootState) => state.polygons);
+  const closedPolygons = useSelector((state: RootState) => state.polygons);
   const promptInfo = useSelector((state: RootState) => state.dialog);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -17,57 +17,55 @@ const PolygonDrawing = () => {
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
+    if (!canvasRef.current) return;
+    const ctx = canvasRef.current.getContext("2d");
     if (promptInfo.restoreLastSession) {
       if (localStorage.getItem("polygons")) {
         const savedPolygons = JSON.parse(localStorage.getItem("polygons")!);
-        if (savedPolygons.length > 0) {
-          for (let i = 0; i < savedPolygons.length; i++) {
-            dispatch(polygonActions.renderPolygons(savedPolygons));
-          }
+        dispatch(polygonActions.setPolygons(savedPolygons));
+
+        for (let polygon of savedPolygons) {
+          drawWhenRender(polygon.points, canvasRef.current);
         }
       }
     } else {
-      canvasRef.current
-        ?.getContext("2d")
-        ?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
       dispatch(polygonActions.clear());
-      localStorage.clear();
+      localStorage.setItem("polygons", "");
+      ctx?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     }
-  }, [promptInfo.restoreLastSession]);
+  }, [dispatch, promptInfo.restoreLastSession]);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvasRef.current) return;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvasRef.current.getContext("2d");
     if (!ctx) return;
 
-    if (polygons.length > 0) {
-      localStorage.setItem("polygons", JSON.stringify(polygons));
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (closedPolygons.length > 0) {
+      localStorage.setItem("polygons", JSON.stringify(closedPolygons));
+      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
-      for (let i = 0; i < polygons.length; i++) {
-        drawWhenRender(polygons[i].points, canvasRef.current);
+      for (let i = 0; i < closedPolygons.length; i++) {
+        drawWhenRender(closedPolygons[i].points, canvasRef.current);
       }
     }
-  }, [polygons]);
+  }, [closedPolygons, dispatch]);
 
   const handlePoints = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvasRef.current) return;
 
-    const rect = canvas.getBoundingClientRect();
+    const rect = canvasRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvasRef.current.getContext("2d");
     if (!ctx) return;
     ctx.fillRect(x, y, 1, 1);
 
     const newPoints = [...points, { x, y }];
     setPoints(newPoints);
 
-    draw(newPoints, canvas);
+    draw(newPoints, canvasRef.current);
     if (arePointsConnected(newPoints)) setConnected(true);
   };
 

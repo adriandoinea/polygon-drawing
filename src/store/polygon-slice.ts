@@ -7,7 +7,7 @@ const polygonSlice = createSlice({
   name: "polygonSlice",
   initialState,
   reducers: {
-    renderPolygons(state, action: PayloadAction<Polygon[]>) {
+    setPolygons(state, action: PayloadAction<Polygon[]>) {
       return action.payload;
     },
 

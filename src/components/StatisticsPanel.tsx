@@ -29,7 +29,7 @@ const StatisticsPanel = () => {
         </Stack>
       </Collapse>
       <Button
-        onClick={() => setShownSettings(!shownSettings)}
+        onClick={() => setShownSettings((prev) => !prev)}
         title={shownSettings ? "Hide Statistics" : "Show Statistics"}
       >
         Toggle statistics

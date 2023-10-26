@@ -5,21 +5,28 @@ import { useDispatch, useSelector } from "react-redux";
 import PolygonDrawing from "./components/PolygonDrawing";
 import PromptModal from "./components/PromptModal";
 import StatisticsPanel from "./components/StatisticsPanel";
-import { useDataParser } from "./hooks/useDataParser";
 import { RootState } from "./store";
 import { dialogActions } from "./store/dialog-slice";
+import { useCallback } from "react";
+import { polygonActions } from "./store/polygon-slice";
 
 function App() {
   const polygons = useSelector((state: RootState) => state.polygons);
   const dispatch = useDispatch();
   const [showTextarea, setShowTextarea] = useState(false);
-  const { onStringChange } = useDataParser();
+
+  const handleStringChange = useCallback(
+    (polygonText: string) => {
+      dispatch(polygonActions.setPolygons(JSON.parse(polygonText)));
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
     if (localStorage.getItem("polygons")) {
       dispatch(dialogActions.openDialog());
     }
-  }, []);
+  }, [dispatch]);
 
   return (
     <Stack rowGap="10px" width="100%" height="100%" alignItems="center">
@@ -32,7 +39,7 @@ function App() {
       {showTextarea && (
         <textarea
           rows={20}
-          onChange={(e) => onStringChange(e.target.value)}
+          onChange={(e) => handleStringChange(e.target.value)}
           value={JSON.stringify(polygons, null, 2)}
         ></textarea>
       )}
