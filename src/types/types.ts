@@ -7,4 +7,5 @@ export interface Polygon {
   id: number;
   points: Point[];
   numPoints: number;
+  closed?: boolean;
 }

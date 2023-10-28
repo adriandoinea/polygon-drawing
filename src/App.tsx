@@ -1,44 +1,61 @@
+import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import { Stack } from "@mui/system";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import PolygonDrawing from "./components/PolygonDrawing";
 import PromptModal from "./components/PromptModal";
 import StatisticsPanel from "./components/StatisticsPanel";
-import { RootState } from "./store";
-import { dialogActions } from "./store/dialog-slice";
 import { useCallback } from "react";
-import { polygonActions } from "./store/polygon-slice";
+import { Polygon } from "./types/types";
+import { arePointsConnected } from "./util";
 
 function App() {
-  const polygons = useSelector((state: RootState) => state.polygons);
-  const dispatch = useDispatch();
   const [showTextarea, setShowTextarea] = useState(false);
+  const [polygons, setPolygons] = useState<Polygon[]>([]);
+  const [isLastSessionRestored, setIsLastSessionRestored] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const handleStringChange = useCallback(
-    (polygonText: string) => {
-      dispatch(polygonActions.setPolygons(JSON.parse(polygonText)));
-    },
-    [dispatch]
-  );
+  const handlePolygonsChange = useCallback((updatedPolygons: Polygon[]) => {
+    setPolygons(updatedPolygons);
+  }, []);
+
+  const handleStringChange = (polygonText: string) => {
+    const newPolygons = JSON.parse(polygonText);
+    for (let polygon of newPolygons) {
+      if (!arePointsConnected(polygon.points)) {
+        polygon.closed = false;
+      }
+    }
+    handlePolygonsChange(newPolygons);
+  };
 
   useEffect(() => {
     if (localStorage.getItem("polygons")) {
-      dispatch(dialogActions.openDialog());
+      setIsDialogOpen(true);
     }
-  }, [dispatch]);
+  }, []);
 
   return (
     <Stack rowGap="10px" width="100%" height="100%" alignItems="center">
-      <PromptModal />
-      <StatisticsPanel />
-      <PolygonDrawing />
+      <PromptModal
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onSetIsLastSessionRestored={(data: boolean) =>
+          setIsLastSessionRestored(data)
+        }
+      />
+      <StatisticsPanel polygons={polygons} />
+      <PolygonDrawing
+        polygons={polygons}
+        onChangePolygons={handlePolygonsChange}
+        isLastSessionRestored={isLastSessionRestored}
+      />
       <Button onClick={() => setShowTextarea(!showTextarea)}>
         Toggle JSON view
       </Button>
       {showTextarea && (
         <textarea
           rows={20}
+          cols={50}
           onChange={(e) => handleStringChange(e.target.value)}
           value={JSON.stringify(polygons, null, 2)}
         ></textarea>

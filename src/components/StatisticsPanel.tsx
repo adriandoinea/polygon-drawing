@@ -1,11 +1,9 @@
+import React, { useState } from "react";
 import { Button, Collapse } from "@mui/material";
 import { Stack } from "@mui/system";
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../store";
+import { Polygon } from "../types/types";
 
-const StatisticsPanel = () => {
-  const polygons = useSelector((state: RootState) => state.polygons);
+const StatisticsPanel = ({ polygons }: { polygons: Polygon[] }) => {
   const [shownSettings, setShownSettings] = useState(false);
 
   const renderStatistics = () => {

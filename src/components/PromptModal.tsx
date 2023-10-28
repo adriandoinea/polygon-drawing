@@ -1,20 +1,20 @@
 import React from "react";
 import { Button, Dialog, DialogTitle, Stack } from "@mui/material";
-import { dialogActions } from "../store/dialog-slice";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store";
 
-const PromptModal = () => {
-  const dialog = useSelector((state: RootState) => state.dialog);
-  const dispatch = useDispatch();
+interface PromptModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSetIsLastSessionRestored: (data: boolean) => void;
+}
 
-  const handleClose = () => {
-    dispatch(dialogActions.closeDialog());
-  };
-
+const PromptModal = ({
+  isOpen,
+  onClose,
+  onSetIsLastSessionRestored,
+}: PromptModalProps) => {
   return (
     <Dialog
-      open={dialog.isOpen}
+      open={isOpen}
       PaperProps={{ sx: { position: "fixed", top: 10, m: 0 } }}
     >
       <DialogTitle>
@@ -30,8 +30,8 @@ const PromptModal = () => {
         <Button
           variant="outlined"
           onClick={() => {
-            dispatch(dialogActions.restoreLastSession(false));
-            handleClose();
+            onSetIsLastSessionRestored(false);
+            onClose();
           }}
         >
           New session
@@ -40,8 +40,8 @@ const PromptModal = () => {
           color="success"
           variant="outlined"
           onClick={() => {
-            dispatch(dialogActions.restoreLastSession(true));
-            handleClose();
+            onSetIsLastSessionRestored(true);
+            onClose();
           }}
         >
           Resume the last session
