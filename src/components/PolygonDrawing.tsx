@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./PolygonDrawing.module.css";
 import { draw, arePointsConnected } from "../util";
-import { Stack } from "@mui/material";
 import { Point, Polygon } from "../types/types";
 
 interface PolygonDrawingProps {
@@ -133,7 +132,8 @@ const PolygonDrawing = ({
 
     if (previewStartPoint?.x && previewStartPoint.y) {
       ctx.beginPath();
-      ctx.strokeStyle = "#42a4f5";
+      ctx.strokeStyle = "#027adb";
+      ctx.setLineDash([5]);
       ctx.moveTo(previewStartPoint.x, previewStartPoint.y);
       ctx.lineTo(x, y);
       const lastPolygon = polygons[polygons.length - 1];
@@ -150,18 +150,14 @@ const PolygonDrawing = ({
   };
 
   return (
-    <Stack alignItems="center" justifyContent="center" rowGap="10px">
-      <canvas
-        className={styles.canvas}
-        ref={canvasRef}
-        onClick={handlePoints}
-        onMouseMove={handleMouseOver}
-        width={700}
-        height={600}
-      >
-        <p>Canvas drawing</p>
-      </canvas>
-    </Stack>
+    <canvas
+      className={styles.canvas}
+      ref={canvasRef}
+      onClick={handlePoints}
+      onMouseMove={handleMouseOver}
+      width={1200}
+      height={600}
+    />
   );
 };
 

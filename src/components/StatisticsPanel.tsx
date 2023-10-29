@@ -18,7 +18,7 @@ const StatisticsPanel = ({ polygons }: { polygons: Polygon[] }) => {
     };
   };
   return (
-    <Stack marginTop="5px">
+    <Stack marginTop="10px">
       <Collapse in={shownSettings}>
         <Stack alignItems="center" rowGap="10px" marginBottom="5px">
           <div>Polygons: {renderStatistics().polygons}</div>
@@ -26,11 +26,8 @@ const StatisticsPanel = ({ polygons }: { polygons: Polygon[] }) => {
           <div>Total lines: {renderStatistics().totalLines}</div>
         </Stack>
       </Collapse>
-      <Button
-        onClick={() => setShownSettings((prev) => !prev)}
-        title={shownSettings ? "Hide Statistics" : "Show Statistics"}
-      >
-        Toggle statistics
+      <Button onClick={() => setShownSettings((prev) => !prev)}>
+        {shownSettings ? "Hide Statistics" : "Show Statistics"}
       </Button>
     </Stack>
   );

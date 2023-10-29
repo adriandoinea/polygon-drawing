@@ -7,6 +7,7 @@ export function draw(points: Point[], canvas: HTMLCanvasElement) {
     if (!ctx) return;
 
     ctx.beginPath();
+    ctx.setLineDash([]);
     if (points.length > 1) {
       ctx.moveTo(points[0].x, points[0].y);
       for (let point of points) {
