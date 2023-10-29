@@ -1,6 +1,6 @@
 # React Polygon Drawing App
 
-This is a React application that allows users to draw polygons on a canvas. It provides a user-friendly interface for creating and manipulating polygons.
+This is a React application that allows users to draw polygons on a canvas. It provides a user-friendly interface for creating and manipulating polygons.\
 You can check it [here](https://polygon-drawing.vercel.app)
 
 ## Features
