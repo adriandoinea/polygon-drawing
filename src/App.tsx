@@ -19,11 +19,10 @@ function App() {
   }, []);
 
   const handleStringChange = (polygonText: string) => {
-    const newPolygons = JSON.parse(polygonText);
+    const newPolygons: Polygon[] = JSON.parse(polygonText);
     for (let polygon of newPolygons) {
-      if (!arePointsConnected(polygon.points)) {
-        polygon.closed = false;
-      }
+      polygon.numPoints = polygon.points.length;
+      polygon.closed = arePointsConnected(polygon.points);
     }
     handlePolygonsChange(newPolygons);
   };

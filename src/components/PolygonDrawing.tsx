@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./PolygonDrawing.module.css";
 import { draw, arePointsConnected } from "../util";
 import { Stack } from "@mui/material";
-import { Polygon } from "../types/types";
+import { Point, Polygon } from "../types/types";
 
 interface PolygonDrawingProps {
   isLastSessionRestored: boolean;
@@ -16,6 +16,9 @@ const PolygonDrawing = ({
   onChangePolygons,
 }: PolygonDrawingProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [previewStartPoint, setPreviewStartPoint] = useState<Point | null>(
+    null
+  );
 
   const undoFn = useCallback(
     (event: KeyboardEvent) => {
@@ -27,6 +30,9 @@ const PolygonDrawing = ({
           if (!lastPolygon.closed) {
             lastPolygon.points.pop();
             lastPolygon.numPoints = lastPolygon.points.length;
+            setPreviewStartPoint(
+              lastPolygon.points[lastPolygon.points.length - 1]
+            );
             if (lastPolygon.points.length === 0) {
               temp.pop();
             }
@@ -88,7 +94,7 @@ const PolygonDrawing = ({
     const ctx = canvasRef.current.getContext("2d");
     if (!ctx) return;
     ctx.fillRect(x, y, 1, 1);
-
+    setPreviewStartPoint({ x, y });
     const openPolygons = polygons.filter((polygon) => !polygon.closed);
     const temp = [...polygons];
     const firstOpenPolygon = openPolygons[0] || { points: [] };
@@ -105,9 +111,42 @@ const PolygonDrawing = ({
       firstOpenPolygon.numPoints = firstOpenPolygon.points.length;
       if (arePointsConnected(firstOpenPolygon.points)) {
         firstOpenPolygon.closed = true;
+        setPreviewStartPoint(null);
       }
     }
     onChangePolygons(temp);
+  };
+
+  const handleMouseOver = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!canvasRef.current) return;
+
+    const rect = canvasRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const ctx = canvasRef.current.getContext("2d");
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    for (let polygon of polygons) {
+      draw(polygon.points, canvasRef.current);
+    }
+
+    if (previewStartPoint?.x && previewStartPoint.y) {
+      ctx.beginPath();
+      ctx.strokeStyle = "#42a4f5";
+      ctx.moveTo(previewStartPoint.x, previewStartPoint.y);
+      ctx.lineTo(x, y);
+      const lastPolygon = polygons[polygons.length - 1];
+      if (
+        x >= lastPolygon.points[0].x - 1 &&
+        x <= lastPolygon.points[0].x + 1 &&
+        y >= lastPolygon.points[0].y - 1 &&
+        y <= lastPolygon.points[0].y + 1
+      ) {
+        ctx.strokeStyle = "#02cc16";
+      }
+      ctx.stroke();
+    }
   };
 
   return (
@@ -116,6 +155,7 @@ const PolygonDrawing = ({
         className={styles.canvas}
         ref={canvasRef}
         onClick={handlePoints}
+        onMouseMove={handleMouseOver}
         width={700}
         height={600}
       >

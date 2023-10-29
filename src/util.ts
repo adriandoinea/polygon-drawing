@@ -11,6 +11,7 @@ export function draw(points: Point[], canvas: HTMLCanvasElement) {
       ctx.moveTo(points[0].x, points[0].y);
       for (let point of points) {
         ctx.lineTo(point.x, point.y);
+        ctx.strokeStyle = "black";
         ctx.stroke();
       }
     }
